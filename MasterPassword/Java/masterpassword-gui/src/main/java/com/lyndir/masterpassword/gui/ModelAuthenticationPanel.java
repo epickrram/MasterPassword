@@ -1,31 +1,34 @@
 package com.lyndir.masterpassword.gui;
 
-import static com.lyndir.lhunath.opal.system.util.StringUtils.strf;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.*;
-import com.lyndir.lhunath.opal.system.logging.Logger;
+import com.google.common.collect.FluentIterable;
+import com.google.common.collect.ImmutableList;
+import com.lyndir.masterpassword.gui.util.Components;
 import com.lyndir.masterpassword.model.MPUser;
 import com.lyndir.masterpassword.model.MPUserFileManager;
-import com.lyndir.masterpassword.gui.util.Components;
-import java.awt.*;
-import java.awt.event.*;
+import org.jetbrains.annotations.NotNull;
+
 import javax.annotation.Nullable;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.plaf.metal.MetalComboBoxEditor;
-import org.jetbrains.annotations.NotNull;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
 
 
 /**
  * @author lhunath, 2014-06-11
  */
 public class ModelAuthenticationPanel extends AuthenticationPanel implements ItemListener, ActionListener, DocumentListener {
-
-    @SuppressWarnings("UnusedDeclaration")
-    private static final Logger logger = Logger.get( ModelAuthenticationPanel.class );
 
     private final JComboBox<ModelUser> userField;
     private final JLabel               masterPasswordLabel;
@@ -140,7 +143,7 @@ public class ModelAuthenticationPanel extends AuthenticationPanel implements Ite
                             return;
 
                         if (JOptionPane.showConfirmDialog( ModelAuthenticationPanel.this, //
-                                                       strf( "Are you sure you want to delete the user and sites remembered for:\n%s.",
+                                                       String.format( "Are you sure you want to delete the user and sites remembered for:\n%s.",
                                                              deleteUser.getFullName() ), //
                                                        "Delete User", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE ) == JOptionPane.CANCEL_OPTION)
                             return;
@@ -158,7 +161,7 @@ public class ModelAuthenticationPanel extends AuthenticationPanel implements Ite
                     @Override
                     public void actionPerformed(final ActionEvent e) {
                         JOptionPane.showMessageDialog( ModelAuthenticationPanel.this, //
-                                                       strf( "Reads users and sites from the directory at:\n%s",
+                                                       String.format( "Reads users and sites from the directory at:\n%s",
                                                              MPUserFileManager.get().getPath().getAbsolutePath() ), //
                                                        "Help", JOptionPane.INFORMATION_MESSAGE );
                     }

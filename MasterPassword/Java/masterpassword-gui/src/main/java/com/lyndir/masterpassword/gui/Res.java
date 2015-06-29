@@ -1,14 +1,10 @@
 package com.lyndir.masterpassword.gui;
 
-import static com.lyndir.lhunath.opal.system.util.ObjectUtils.*;
-import static com.lyndir.lhunath.opal.system.util.StringUtils.*;
-
 import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 import com.google.common.io.Resources;
 import com.google.common.util.concurrent.JdkFutureAdapters;
 import com.google.common.util.concurrent.ListenableFuture;
-import com.lyndir.lhunath.opal.system.logging.Logger;
 import com.lyndir.masterpassword.MPIdenticon;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
@@ -18,8 +14,11 @@ import java.io.IOException;
 import java.lang.ref.SoftReference;
 import java.net.URL;
 import java.util.Map;
+import java.util.Optional;
 import java.util.WeakHashMap;
 import java.util.concurrent.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.*;
@@ -31,7 +30,7 @@ import javax.swing.*;
 public abstract class Res {
 
     private static final WeakHashMap<Window, ExecutorService> executorByWindow = new WeakHashMap<>();
-    private static final Logger                               logger           = Logger.get( Res.class );
+    private static final Logger                               logger           = Logger.getLogger(Res.class.getSimpleName());
     private static final Colors                               colors           = new Colors();
 
     public static Future<?> execute(final Window host, final Runnable job) {
@@ -42,7 +41,7 @@ public abstract class Res {
                     job.run();
                 }
                 catch (Throwable t) {
-                    logger.err( t, "Unexpected: %s", t.getLocalizedMessage() );
+                    logger.log(Level.SEVERE, String.format("Unexpected: %s", t.getLocalizedMessage()), t );
                 }
             }
         } );
@@ -58,7 +57,7 @@ public abstract class Res {
                     return job.call();
                 }
                 catch (Throwable t) {
-                    logger.err( t, "Unexpected: %s", t.getLocalizedMessage() );
+                    logger.log(Level.SEVERE, String.format("Unexpected: %s", t.getLocalizedMessage()), t);
                     throw t;
                 }
             }
@@ -97,7 +96,7 @@ public abstract class Res {
     }
 
     public static Icon avatar(final int index) {
-        return new RetinaIcon( Resources.getResource( strf( "media/avatar-%d@2x.png", index % avatars() ) ) );
+        return new RetinaIcon( Resources.getResource( String.format("media/avatar-%d@2x.png", index % avatars()) ) );
     }
 
     public static int avatars() {
@@ -235,7 +234,8 @@ public abstract class Res {
         }
 
         public synchronized void paintIcon(Component c, Graphics g, int x, int y) {
-            ImageObserver observer = ifNotNullElse( getImageObserver(), c );
+
+            ImageObserver observer = Optional.of(getImageObserver()).orElse(c);
 
             Image image = getImage();
             int width = image.getWidth( observer );
@@ -328,7 +328,7 @@ public abstract class Res {
                     break;
             }
 
-            throw new IllegalArgumentException( strf( "Color: %s or mode: %s not supported: ", identiconColor, backgroundMode ) );
+            throw new IllegalArgumentException( String.format("Color: %s or mode: %s not supported: ", identiconColor, backgroundMode) );
         }
 
         public enum BackgroundMode {

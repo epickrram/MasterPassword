@@ -1,11 +1,11 @@
 package com.lyndir.masterpassword.gui;
 
-import static com.lyndir.lhunath.opal.system.util.StringUtils.*;
 
+import com.google.common.base.Preconditions;
+import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Iterables;
 import com.google.common.util.concurrent.*;
-import com.lyndir.lhunath.opal.system.util.PredicateNN;
 import com.lyndir.masterpassword.*;
 import com.lyndir.masterpassword.gui.util.Components;
 import java.awt.*;
@@ -58,7 +58,7 @@ public class PasswordFrame extends JFrame implements DocumentListener {
         root.add( Components.borderPanel( sitePanel, BorderFactory.createRaisedBevelBorder(), Res.colors().frameBg() ) );
 
         // User
-        sitePanel.add( Components.label( strf( "Generating passwords for: %s", user.getFullName() ), SwingConstants.CENTER ) );
+        sitePanel.add( Components.label( String.format("Generating passwords for: %s", user.getFullName()), SwingConstants.CENTER ) );
         sitePanel.add( Components.stud() );
 
         // Site Name
@@ -214,10 +214,13 @@ public class PasswordFrame extends JFrame implements DocumentListener {
 
         Iterable<Site> siteResults = user.findSitesByName(siteNameQuery);
         if (!allowNameCompletion)
-            siteResults = FluentIterable.from(siteResults).filter(new PredicateNN<Site>() {
+            siteResults = FluentIterable.from(siteResults).filter(new Predicate<Site>()
+            {
                 @Override
-                public boolean apply(Site input) {
-                    return siteNameQuery.equals(input.getSiteName());
+                public boolean apply(@Nullable final Site site)
+                {
+                    Preconditions.checkNotNull(site);
+                    return siteNameQuery.equals(site.getSiteName());
                 }
             });
         final Site site = Iterables.getFirst(siteResults,

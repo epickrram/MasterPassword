@@ -18,16 +18,20 @@
 package com.lyndir.masterpassword.gui;
 
 import com.google.common.base.Charsets;
-import com.google.common.io.*;
-import com.lyndir.lhunath.opal.system.logging.Logger;
-import com.lyndir.lhunath.opal.system.util.TypeUtils;
+import com.google.common.io.CharSource;
+import com.google.common.io.Resources;
 
-import java.io.*;
+import javax.swing.*;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
 import java.util.Enumeration;
-import java.util.jar.*;
-import javax.swing.*;
+import java.util.jar.Attributes;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
@@ -38,7 +42,7 @@ import javax.swing.*;
 public class GUI implements UnlockFrame.SignInCallback {
 
     @SuppressWarnings("UnusedDeclaration")
-    private static final Logger logger = Logger.get( GUI.class );
+    private static final Logger logger = Logger.getLogger(GUI.class.getSimpleName());
 
     private final UnlockFrame unlockFrame = new UnlockFrame( this );
     private PasswordFrame passwordFrame;
@@ -55,7 +59,7 @@ public class GUI implements UnlockFrame.SignInCallback {
         catch (UnsupportedLookAndFeelException | ClassNotFoundException | InstantiationException | IllegalAccessException ignored) {
         }
 
-        TypeUtils.<GUI>newInstance( "com.lyndir.masterpassword.gui.platform.mac.AppleGUI" ).or( new GUI() ).open();
+        new GUI().open();
     }
 
     private static void checkUpdate() {
@@ -71,11 +75,11 @@ public class GUI implements UnlockFrame.SignInCallback {
                 String upstreamRevisionURL = "http://masterpasswordapp.com/masterpassword-gui.jar.rev";
                 CharSource upstream = Resources.asCharSource( URI.create( upstreamRevisionURL ).toURL(), Charsets.UTF_8 );
                 String upstreamRevision = upstream.readFirstLine();
-                logger.inf( "Local Revision:    <%s>", manifestRevision );
-                logger.inf( "Upstream Revision: <%s>", upstreamRevision );
+                logger.info(String.format("Local Revision:    <%s>", manifestRevision));
+                logger.info(String.format("Upstream Revision: <%s>", upstreamRevision));
                 if (manifestRevision != null && !manifestRevision.equalsIgnoreCase( upstreamRevision )) {
-                    logger.wrn( "You are not running the current official version.  Please update from:\n"
-                                + "http://masterpasswordapp.com/masterpassword-gui.jar" );
+                    logger.warning("You are not running the current official version.  Please update from:\n"
+                            + "http://masterpasswordapp.com/masterpassword-gui.jar");
                     JOptionPane.showMessageDialog( null, "A new version of Master Password is available.\n"
                                                          + "Please download the latest version from http://masterpasswordapp.com",
                                                    "Update Available", JOptionPane.WARNING_MESSAGE );
@@ -83,7 +87,7 @@ public class GUI implements UnlockFrame.SignInCallback {
             }
         }
         catch (IOException e) {
-            logger.wrn( e, "Couldn't check for version update." );
+            logger.log(Level.WARNING, "Couldn't check for version update.", e );
         }
     }
 

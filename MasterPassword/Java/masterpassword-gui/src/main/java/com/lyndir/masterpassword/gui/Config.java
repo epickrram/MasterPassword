@@ -1,8 +1,5 @@
 package com.lyndir.masterpassword.gui;
 
-import com.lyndir.lhunath.opal.system.util.ConversionUtils;
-
-
 /**
  * @author lhunath, 2014-08-31
  */
@@ -15,6 +12,6 @@ public class Config {
     }
 
     public boolean checkForUpdates() {
-        return ConversionUtils.toBoolean( System.getProperty( "mp.update.check" ) ).or( true );
+        return Boolean.getBoolean("mp.update.check");
     }
 }

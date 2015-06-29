@@ -1,12 +1,11 @@
 package com.lyndir.masterpassword.gui;
 
-import static com.lyndir.lhunath.opal.system.util.ObjectUtils.*;
-
 import com.lyndir.masterpassword.MPIdenticon;
 import com.lyndir.masterpassword.gui.util.Components;
 import com.lyndir.masterpassword.model.IncorrectMasterPasswordException;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Optional;
 import javax.annotation.Nullable;
 import javax.swing.*;
 
@@ -128,7 +127,7 @@ public class UnlockFrame extends JFrame {
         SwingUtilities.invokeLater( new Runnable() {
             @Override
             public void run() {
-                ifNotNullElse( authenticationPanel.getFocusComponent(), signInButton ).requestFocusInWindow();
+                Optional.of(authenticationPanel.getFocusComponent()).orElse(signInButton ).requestFocusInWindow();
             }
         } );
     }

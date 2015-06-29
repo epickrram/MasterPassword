@@ -1,7 +1,5 @@
 package com.lyndir.masterpassword.gui;
 
-import static com.lyndir.lhunath.opal.system.util.StringUtils.strf;
-
 import com.lyndir.masterpassword.MPSiteType;
 import com.lyndir.masterpassword.MasterKey;
 
@@ -29,6 +27,6 @@ public abstract class Site {
 
     @Override
     public String toString() {
-        return strf( "{%s: %s}", getClass().getSimpleName(), getSiteName() );
+        return String.format( "{%s: %s}", getClass().getSimpleName(), getSiteName() );
     }
 }
