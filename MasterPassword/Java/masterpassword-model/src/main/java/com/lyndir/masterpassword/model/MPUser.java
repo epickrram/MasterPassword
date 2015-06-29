@@ -1,16 +1,19 @@
 package com.lyndir.masterpassword.model;
 
-import static com.lyndir.lhunath.opal.system.util.StringUtils.*;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
 import com.lyndir.lhunath.opal.system.CodeUtils;
 import com.lyndir.masterpassword.MPSiteType;
 import com.lyndir.masterpassword.MasterKey;
-import java.util.*;
+import org.joda.time.DateTime;
+import org.joda.time.Instant;
+import org.joda.time.ReadableInstant;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import org.joda.time.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Objects;
 
 
 /**
@@ -138,7 +141,7 @@ public class MPUser implements Comparable<MPUser> {
 
     @Override
     public String toString() {
-        return strf( "{MPUser: %s}", fullName );
+        return String.format( "{MPUser: %s}", fullName );
     }
 
     @Override

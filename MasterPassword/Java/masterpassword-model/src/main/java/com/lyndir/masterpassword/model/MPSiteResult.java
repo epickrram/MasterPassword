@@ -1,7 +1,5 @@
 package com.lyndir.masterpassword.model;
 
-import static com.lyndir.lhunath.opal.system.util.StringUtils.strf;
-
 import java.util.Objects;
 
 
@@ -32,6 +30,6 @@ public class MPSiteResult {
 
     @Override
     public String toString() {
-        return strf( "{MPSiteResult: %s}", site );
+        return String.format("{MPSiteResult: %s}", site);
     }
 }

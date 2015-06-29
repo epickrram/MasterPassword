@@ -3,9 +3,9 @@ package com.lyndir.masterpassword.model;
 import com.google.common.base.*;
 import com.google.common.collect.*;
 import com.google.common.io.CharSink;
-import com.lyndir.lhunath.opal.system.logging.Logger;
 import java.io.*;
-import java.util.SortedSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.Nullable;
 
 
@@ -14,8 +14,7 @@ import javax.annotation.Nullable;
  */
 public class MPUserFileManager extends MPUserManager {
 
-    @SuppressWarnings("UnusedDeclaration")
-    private static final Logger logger = Logger.get( MPUserFileManager.class );
+    private static final Logger logger = Logger.getLogger(MPUserFileManager.class.getSimpleName());
     private static final File   mpwd   = new File( System.getProperty( "user.home" ), ".mpw.d" );
     private static final MPUserFileManager instance;
 
@@ -23,7 +22,7 @@ public class MPUserFileManager extends MPUserManager {
         File mpwrc = new File( System.getProperty( "user.home" ), ".mpwrc" );
         if (mpwrc.exists() && !mpwd.exists())
             if (!mpwrc.renameTo( mpwd ))
-                logger.err( "Couldn't migrate: %s -> %s", mpwrc, mpwd );
+                logger.log(Level.SEVERE, String.format("Couldn't migrate: %s -> %s", mpwrc, mpwd ));
 
         instance = create( mpwd );
     }
@@ -47,7 +46,7 @@ public class MPUserFileManager extends MPUserManager {
 
     private static Iterable<MPUser> unmarshallUsers(final File userFilesDirectory) {
         if (!userFilesDirectory.mkdirs() && !userFilesDirectory.isDirectory()) {
-            logger.err( "Couldn't create directory for user files: %s", userFilesDirectory );
+            logger.severe( String.format("Couldn't create directory for user files: %s", userFilesDirectory ));
             return ImmutableList.of();
         }
 
@@ -64,7 +63,7 @@ public class MPUserFileManager extends MPUserManager {
                     return MPSiteUnmarshaller.unmarshall( Preconditions.checkNotNull( file ) ).getUser();
                 }
                 catch (IOException e) {
-                    logger.err( e, "Couldn't read user from: %s", file );
+                    logger.log(Level.SEVERE, String.format("Couldn't read user from: %s", file), e );
                     return null;
                 }
             }
@@ -99,7 +98,7 @@ public class MPUserFileManager extends MPUserManager {
                 }.write( MPSiteMarshaller.marshallSafe( user ).getExport() );
             }
             catch (IOException e) {
-                logger.err( e, "Unable to save sites for user: %s", user );
+                logger.log(Level.SEVERE, String.format("Unable to save sites for user: %s", user), e );
             }
 
         // Remove deleted users.
@@ -111,7 +110,7 @@ public class MPUserFileManager extends MPUserManager {
         } ))
             if (getUserNamed( userFile.getName().replaceFirst( "\\.mpsites$", "" ) ) == null)
                 if (!userFile.delete())
-                    logger.err( "Couldn't delete file: %s", userFile );
+                    logger.severe( String.format("Couldn't delete file: %s", userFile ));
     }
 
     /**

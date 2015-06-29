@@ -1,7 +1,5 @@
 package com.lyndir.masterpassword.model;
 
-import static com.lyndir.lhunath.opal.system.util.ObjectUtils.ifNotNullElse;
-import static com.lyndir.lhunath.opal.system.util.StringUtils.strf;
 
 import com.google.common.base.Preconditions;
 import com.lyndir.masterpassword.MasterKey;
@@ -10,6 +8,8 @@ import javax.annotation.Nullable;
 import org.joda.time.Instant;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
+
+import java.util.Optional;
 
 
 /**
@@ -78,16 +78,16 @@ public class MPSiteMarshaller {
     }
 
     public String marshallSite(MPSite site) {
-        String exportLine = strf( "%s  %8d  %8s  %25s\t%25s\t%s", //
-                                  rfc3339.print( site.getLastUsed() ), // lastUsed
-                                  site.getUses(), // uses
-                                  strf( "%d:%d:%d", //
-                                        site.getSiteType().getType(), // type
-                                        site.getAlgorithmVersion().toInt(), // algorithm
-                                        site.getSiteCounter() ), // counter
-                                  ifNotNullElse( site.getLoginName(), "" ), // loginName
-                                  site.getSiteName(), // siteName
-                                  ifNotNullElse( contentMode.contentForSite( site, masterKey ), "" ) // password
+        String exportLine = String.format("%s  %8d  %8s  %25s\t%25s\t%s", //
+                rfc3339.print(site.getLastUsed()), // lastUsed
+                site.getUses(), // uses
+                String.format("%d:%d:%d", //
+                        site.getSiteType().getType(), // type
+                        site.getAlgorithmVersion().toInt(), // algorithm
+                        site.getSiteCounter()), // counter
+                Optional.of(site.getLoginName()).orElse(""), // loginName
+                site.getSiteName(), // siteName
+                Optional.of(contentMode.contentForSite(site, masterKey)).orElse("") // password
         );
         export.append( exportLine ).append( '\n' );
 

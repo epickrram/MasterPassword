@@ -1,25 +1,27 @@
 package com.lyndir.masterpassword.model;
 
-import static com.lyndir.lhunath.opal.system.util.ObjectUtils.*;
-
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.CharStreams;
 import com.lyndir.lhunath.opal.system.CodeUtils;
-import com.lyndir.lhunath.opal.system.logging.Logger;
 import com.lyndir.lhunath.opal.system.util.ConversionUtils;
-import com.lyndir.lhunath.opal.system.util.NNOperation;
 import com.lyndir.masterpassword.MPSiteType;
 import com.lyndir.masterpassword.MasterKey;
-import java.io.*;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.List;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.logging.Logger;
 
 
 /**
@@ -28,7 +30,7 @@ import org.joda.time.format.ISODateTimeFormat;
 public class MPSiteUnmarshaller {
 
     @SuppressWarnings("UnusedDeclaration")
-    private static final Logger            logger            = Logger.get( MPSite.class );
+    private static final Logger            logger            = Logger.getLogger(MPSite.class.getSimpleName());
     private static final DateTimeFormatter rfc3339           = ISODateTimeFormat.dateTimeNoMillis();
     private static final Pattern[]         unmarshallFormats = new Pattern[]{
             Pattern.compile( "^([^ ]+) +(\\d+) +(\\d+)(:\\d+)? +([^\t]+)\t(.*)" ),
@@ -95,12 +97,9 @@ public class MPSiteUnmarshaller {
 
             // No comment.
             else if (marshaller != null)
-                ifNotNull( marshaller.unmarshallSite( line ), new NNOperation<MPSite>() {
-                    @Override
-                    public void apply(@Nonnull final MPSite site) {
-                        sites.add( site );
-                    }
-                } );
+            {
+                Optional.of(marshaller.unmarshallSite(line)).ifPresent((site) -> sites.add(site));
+            }
 
         return Preconditions.checkNotNull( marshaller, "No full header found in import file." );
     }
@@ -146,7 +145,8 @@ public class MPSiteUnmarshaller {
                 break;
 
             default:
-                throw logger.bug( "Unexpected format: %d", importFormat );
+                logger.warning( String.format("Unexpected format: %d", importFormat ));
+                throw new RuntimeException(String.format("Unexpected format: %d", importFormat ));
         }
 
         user.addSite( site );
