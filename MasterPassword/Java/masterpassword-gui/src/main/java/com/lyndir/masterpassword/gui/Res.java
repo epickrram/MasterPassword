@@ -235,7 +235,7 @@ public abstract class Res {
 
         public synchronized void paintIcon(Component c, Graphics g, int x, int y) {
 
-            ImageObserver observer = Optional.of(getImageObserver()).orElse(c);
+            ImageObserver observer = Optional.ofNullable(getImageObserver()).orElse(c);
 
             Image image = getImage();
             int width = image.getWidth( observer );

@@ -127,7 +127,7 @@ public class UnlockFrame extends JFrame {
         SwingUtilities.invokeLater( new Runnable() {
             @Override
             public void run() {
-                Optional.of(authenticationPanel.getFocusComponent()).orElse(signInButton ).requestFocusInWindow();
+                Optional.ofNullable(authenticationPanel.getFocusComponent()).orElse(signInButton ).requestFocusInWindow();
             }
         } );
     }

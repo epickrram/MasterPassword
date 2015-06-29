@@ -98,7 +98,7 @@ public class MPSiteUnmarshaller {
             // No comment.
             else if (marshaller != null)
             {
-                Optional.of(marshaller.unmarshallSite(line)).ifPresent((site) -> sites.add(site));
+                Optional.ofNullable(marshaller.unmarshallSite(line)).ifPresent((site) -> sites.add(site));
             }
 
         return Preconditions.checkNotNull( marshaller, "No full header found in import file." );
